@@ -1,18 +1,17 @@
-# towers
+# Clack towers visualisation.
 
-A Quil sketch designed to ... well, that part is up to you.
+A toy program written at a "Hack The Tower" meetup.
 
-## Usage
+![Screen shot](/screen-shot.png?raw=true)
 
-LightTable - open `core.clj` and press `Ctrl+Shift+Enter` to evaluate the file.
+## Run
 
-Emacs - run cider, open `core.clj` and press `C-c C-k` to evaluate the file.
+`lein run`
 
-REPL - run `(require 'towers.core)`.
+## Test
+
+`lein test`
 
 ## License
 
-Copyright © 2014 FIXME
-
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+[MIT License](http://www.opensource.org/licenses/MIT)

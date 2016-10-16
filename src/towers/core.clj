@@ -1,45 +1,10 @@
 (ns towers.core
   (:require [quil.core :as q]
-            [quil.middleware :as m]))
+            [quil.middleware :as m]
+            [towers.clacks :refer :all]))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(def alphabet
-  {\a [1 0 0 0 0 0 1 0]
-   \b [1 0 0 1 1 0 0 1]
-   \i [0 1 0 0 1 0 0 1]
-   \s [1 0 0 1 1 0 0 1]
-   \f [1 1 1 0 1 0 1 1]
-   \space [0 0 0 1 1 0 0 0]})
-
-(defn random-char []
-  (rand-nth (keys alphabet)))
-
-(defn reverse-alphabet []
-  (clojure.set/map-invert alphabet))
-
-(defn character->clack [character]
-  (alphabet character))
-
-(defn message->clacks [message]
-  (map character->clack message))
-
-(defn clack->character [clack]
-  ((reverse-alphabet) clack))
-
-(defn clacks->message [clacks]
-  (reduce str ""
-          (map clack->character clacks)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-(def tower (atom [0 0 0 1 1 0 0 0]))
-
-(defn change-tower! []
-  (swap! tower (fn [x] (character->clack (random-char)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn go []
+  (println "Close the Applet window to quit."))
 
 (defn setup []
   ; Set frame rate to 30 frames per second.
@@ -47,10 +12,11 @@
   ; Set color mode to HSB (HSV) instead of default RGB.
   (q/color-mode :hsb)
   ; setup function returns initial state.
-  [0 0 1 0 1 0 0 0])
+  (repeat 8 [0 0 0 0 0 0 0 0]))
 
 (defn update-state [state]
-  (character->clack (random-char)))
+  "First tower gets a random clack message"
+  (pop (into [(character->clack (random-char))] state)))
 
 (defn draw-state [state]
   ; Clear the sketch by filling it with light-grey color.
@@ -58,26 +24,19 @@
   ; Set circle color.
   (q/fill 40 255 255)
 
-  ; Calculate x and y coordinates of the circle.
-  (println state)
-
-  (dotimes [n 8]
-     (when (= (get state n) 1) (q/ellipse 50 (+ 50 (* n 50)) 50 50))))
-
-
-
+  ; Draw Towers
+  (dotimes [t 8] ;; each tower
+    (dotimes [b 8]  ;; each bit
+      (when (= (get (get state t) b) 1) (q/ellipse (+ 50 (* t 50)) (+ 50 (* b 50)) 50 50)))))
 
 (q/defsketch towers
-  :title "You spin my circle right round"
-  :size [500 500]
-                                        ; setup function called only once, during sketch initialization.
+  :title "Clack Tower Simulation"
+  :size [450 450]
+  ; setup function called only once, during sketch initialization.
   :setup setup
   ; update-state is called on each iteration before draw-state.
   :update update-state
   :draw draw-state
   :features [:keep-on-top]
   ; This sketch uses functional-mode middleware.
-  ; Check quil wiki for more info about middlewares and particularly
-  ; fun-mode.
   :middleware [m/fun-mode])
- 
